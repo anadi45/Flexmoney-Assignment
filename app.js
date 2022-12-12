@@ -6,6 +6,10 @@ const cors = require('cors');
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+
+app.use(express.static('client/build'));
+
 const {connectDB} = require("./src/config/db");
 const {router} = require("./src/router");
 
