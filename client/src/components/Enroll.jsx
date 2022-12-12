@@ -74,7 +74,7 @@ const Enroll = () => {
     };
     await axios
       .post(
-        `http://localhost:3300/enroll`,
+        `https://ranjeetbaraik-flexmoney-asssignment.onrender.com/enroll`,
         {
           firstName: data.firstName,
           secondName: data.secondName,
