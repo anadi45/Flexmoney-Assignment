@@ -111,7 +111,7 @@ const Enroll = () => {
               {errors.firstName && <p className="error">Field required with limit: 12 chars</p>}
             </div>
             <div className="mb-3 input-div">
-              <p>Second Name</p>
+              <p>Last Name</p>
               <input
                 type="text"
                 className="form-control"
