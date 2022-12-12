@@ -3,6 +3,7 @@ import "../styles/Enroll.css";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useForm } from "react-hook-form";
+import axios from "axios";
 
 const Enroll = () => {
   const [firstName, setFirstName] = useState("");
@@ -13,7 +14,8 @@ const Enroll = () => {
   const [age, setAge] = useState(0);
   const [card, setCard] = useState(0);
   const [cvv, setCvv] = useState(0);
-  const [modal, setModal] = useState(false);
+  const [password, setPassword] = useState("");
+  const [response, setReponse] = useState("");
 
   const [show, setShow] = useState(false);
 
@@ -58,11 +60,36 @@ const Enroll = () => {
     setCvv(e.target.value);
   };
 
-  const onSubmit = (data) => {
-    handleShow()
-    // e.preventDefault();
-    // console.log(firstName,secondName,mail,phone,age,batch);
-    console.log(data);
+  const passwordChange = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const onSubmit = async (data) => {
+    data.batch = batch;
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        "access-control-allow-origin": "*",
+      },
+    };
+    await axios
+      .post(
+        `http://localhost:3300/enroll`,
+        {
+          firstName: data.firstName,
+          secondName: data.secondName,
+          age: data.age,
+          phone: data.phone,
+          mail: data.mail,
+          password: data.password,
+          batch: data.batch,
+        },
+        config
+      )
+      .then((res) => {
+        setReponse(res.data.message);
+        handleShow();
+      });
   };
   return (
     <div className="container">
@@ -83,8 +110,8 @@ const Enroll = () => {
             />
             {errors.firstName && <p>Field required with letter limit: 12</p>}
           </div>
-          <div className="mb-3 input-div">            
-            <p>Second Name</p>            
+          <div className="mb-3 input-div">
+            <p>Second Name</p>
             <input
               type="text"
               className="form-control"
@@ -95,8 +122,8 @@ const Enroll = () => {
             />
             {errors.secondName && <p>Field required with letter limit: 12</p>}
           </div>
-          <div className="mb-3 input-div">            
-            <p>Phone Number</p>            
+          <div className="mb-3 input-div">
+            <p>Phone Number</p>
             <input
               type="number"
               className="form-control"
@@ -112,8 +139,8 @@ const Enroll = () => {
           </div>
         </div>
         <div className="input-out-div">
-          <div className="mb-3 input-div">            
-            <p>Email</p>            
+          <div className="mb-3 input-div">
+            <p>Email</p>
             <input
               type="mail"
               className="form-control"
@@ -130,8 +157,25 @@ const Enroll = () => {
           </div>
         </div>
         <div className="input-out-div">
-          <div className="mb-3 input-div">            
-            <p>Age</p>            
+          <div className="mb-3 input-div">
+            <p>Password</p>
+            <input
+              type="password"
+              className="form-control"
+              id="inputPassword"
+              autoComplete="off"
+              onChange={passwordChange}
+              {...register("password", {
+                required: true,
+                minLength: 8,
+              })}
+            />
+            {errors.password && <p>Password must be of minm 8 characters.</p>}
+          </div>
+        </div>
+        <div className="input-out-div">
+          <div className="mb-3 input-div">
+            <p>Age</p>
             <input
               type="number"
               className="form-control"
@@ -146,8 +190,8 @@ const Enroll = () => {
             />
             {errors.age && <p>Age Range Allowed: 18-65</p>}
           </div>
-          <div className="mb-3 input-div">            
-            <p>Batch</p>            
+          <div className="mb-3 input-div">
+            <p>Batch</p>
             <select className="form-select" onChange={batchChange}>
               <option value="6-7 AM" className="form-control">
                 6-7 AM
@@ -165,8 +209,8 @@ const Enroll = () => {
           </div>
         </div>
         Payment
-        <div className="mb-3 card-div">          
-          <p>Card Number (Type 0000111122223333 for demo)</p>          
+        <div className="mb-3 card-div">
+          <p>Card Number (Type 0000111122223333 for demo)</p>
           <input
             type="number"
             className="form-control"
@@ -177,8 +221,8 @@ const Enroll = () => {
               pattern: /^\d{16}$/,
             })}
           />
-          {errors.card && <p>Card Number must be 16 digits.</p>}          
-          <p>CVV (Type 123 for demo)</p>          
+          {errors.card && <p>Card Number must be 16 digits.</p>}
+          <p>CVV (Type 123 for demo)</p>
           <input
             type="number"
             className="form-control"
@@ -199,22 +243,14 @@ const Enroll = () => {
           Submit
         </button>
       </form>
-
-      {/* <Button variant="primary" onClick={handleShow}>
-        Launch demo modal
-      </Button> */}
-
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>OTP Verification</Modal.Title>
+          <Modal.Title>Response Submitted</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Enter OTP to complete payment (Enter 1234 for demo)</Modal.Body>
+        <Modal.Body>{response}</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
-          </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Submit
           </Button>
         </Modal.Footer>
       </Modal>
